@@ -21,10 +21,35 @@
 ● Добавить дополнительные сетевые интерфейсы, если потребуется    
 
 Настраиваем серверы согласно методичке с помощью `Ansible`. Запускаем.
-Проверим выход в интернет через сервер inetRouter c хоста office1Server:
+Проверим выход в интернет через сервер inetRouter c хоста office2Server:
 
 ```bash
-
- 
+root@office2Server:~# traceroute ya.ru
+traceroute to ya.ru (5.255.255.242), 30 hops max, 60 byte packets
+ 1  192.168.1.1 (192.168.1.1)  1.695 ms  1.263 ms  1.112 ms
+ 2  192.168.255.5 (192.168.255.5)  2.138 ms  1.930 ms  1.634 ms
+ 3  192.168.255.1 (192.168.255.1)  3.330 ms  3.117 ms  2.980 ms
+ 4  * * *
+ 5  * * *
+ 6  * * *
+ ...
 ```
+Видим, что запрос проходит через office2Router-->centralRouter-->inetRouter.
 
+Проверим, видит ли office2Server, например, office1Server:
+
+```bash
+root@office2Server:~# ping 192.168.2.130
+PING 192.168.2.130 (192.168.2.130) 56(84) bytes of data.
+64 bytes from 192.168.2.130: icmp_seq=1 ttl=61 time=2.25 ms
+64 bytes from 192.168.2.130: icmp_seq=2 ttl=61 time=3.48 ms
+64 bytes from 192.168.2.130: icmp_seq=3 ttl=61 time=3.52 ms
+...
+root@office2Server:~# traceroute 192.168.2.130
+traceroute to 192.168.2.130 (192.168.2.130), 30 hops max, 60 byte packets
+ 1  192.168.1.1 (192.168.1.1)  0.485 ms  0.444 ms  0.797 ms
+ 2  192.168.255.5 (192.168.255.5)  2.240 ms  2.091 ms  1.968 ms
+ 3  192.168.255.10 (192.168.255.10)  1.791 ms  2.761 ms  2.644 ms
+ 4  192.168.2.130 (192.168.2.130)  2.537 ms  2.380 ms  1.393 ms
+ ```
+ 
